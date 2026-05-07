@@ -95,12 +95,16 @@ help: ## Display this help.
 ##@ Development
 
 .PHONY: manifests
-manifests: controller-gen helm-sync-crds ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+manifests: controller-gen helm-sync-crds helm-sync-versions ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: helm-sync-crds
 helm-sync-crds: ## Sync CRD YAMLs from config/crd/bases into charts/cloudflare-operator/crds/
 	cp config/crd/bases/*.yaml charts/cloudflare-operator/crds/
+
+.PHONY: helm-sync-versions
+helm-sync-versions: ## Sync appVersion in charts/cloudflare-operator/Chart.yaml from VERSION
+	sed -i "s/^appVersion:.*/appVersion: \"$(VERSION)\"/" charts/cloudflare-operator/Chart.yaml
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
