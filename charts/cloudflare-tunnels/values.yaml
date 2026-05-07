@@ -11,8 +11,18 @@ cloudflare:
 
 # Defaults applied to every tunnel unless overridden per-tunnel.
 defaults:
-  # cloudflared tunnel protocol. http2 is recommended over auto for stability.
+  # cloudflared tunnel protocol.
+  # Valid values: http2, h2mux, auto
+  # http2 is recommended: it uses a single multiplexed connection per edge,
+  # which reconnects faster than h2mux and is more predictable than auto.
   protocol: http2
+
+  # Cloudflare edge IP version preference for outbound connections.
+  # Valid values: auto, 4, 6
+  # auto allows cloudflared to connect over IPv4 or IPv6, spreading load
+  # across more Cloudflare PoPs and reducing the reconnect window during
+  # Cloudflare edge maintenance events.
+  edgeIpVersion: auto
 
   # Number of cloudflared pod replicas per tunnel.
   # When using hard pod anti-affinity this must not exceed the number of nodes.
@@ -25,25 +35,9 @@ defaults:
     maxSurge: 0
     maxUnavailable: 1
 
-  # cloudflared args passed to every tunnel Deployment via deployPatch.
-  # --edge-ip-version auto allows IPv4+IPv6 edge connections, spreading load
-  # across more Cloudflare PoPs and reducing the reconnect window on edge
-  # maintenance events.
-  args:
-    - tunnel
-    - --protocol
-    - http2
-    - --edge-ip-version
-    - auto
-    - --config
-    - /etc/cloudflared/config/config.yaml
-    - --metrics
-    - 0.0.0.0:2000
-    - run
-
 # List of ClusterTunnels to create.
 # Each entry must supply: name, domain.
-# Optional per-tunnel overrides: replicas, protocol, strategy, args.
+# Optional per-tunnel overrides: replicas, protocol, edgeIpVersion, strategy.
 #
 # Example:
 # tunnels:
@@ -52,4 +46,6 @@ defaults:
 #   - name: another-tunnel
 #     domain: other.example.com
 #     replicas: 3
+#     protocol: http2
+#     edgeIpVersion: auto
 tunnels: []

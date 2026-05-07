@@ -1,9 +1,24 @@
 {{- range .Values.tunnels }}
 {{- $tunnel := . }}
-{{- $replicas := $tunnel.replicas | default $.Values.defaults.replicas }}
-{{- $protocol := $tunnel.protocol | default $.Values.defaults.protocol }}
-{{- $strategy := $tunnel.strategy | default $.Values.defaults.strategy }}
-{{- $args := $tunnel.args | default $.Values.defaults.args }}
+{{- $replicas      := $tunnel.replicas      | default $.Values.defaults.replicas }}
+{{- $protocol      := $tunnel.protocol      | default $.Values.defaults.protocol }}
+{{- $edgeIpVersion := $tunnel.edgeIpVersion | default $.Values.defaults.edgeIpVersion }}
+{{- $strategy      := $tunnel.strategy      | default $.Values.defaults.strategy }}
+
+{{/* Validate protocol */}}
+{{- if not (has $protocol (list "http2" "h2mux" "auto")) }}
+  {{- fail (printf "tunnel %q: invalid protocol %q — must be one of: http2, h2mux, auto" $tunnel.name $protocol) }}
+{{- end }}
+
+{{/* Validate edgeIpVersion */}}
+{{- if not (has $edgeIpVersion (list "auto" "4" "6")) }}
+  {{- fail (printf "tunnel %q: invalid edgeIpVersion %q — must be one of: auto, 4, 6" $tunnel.name $edgeIpVersion) }}
+{{- end }}
+
+{{/* Validate replicas is a positive integer */}}
+{{- if lt (int $replicas) 1 }}
+  {{- fail (printf "tunnel %q: replicas must be >= 1, got %d" $tunnel.name (int $replicas)) }}
+{{- end }}
 ---
 apiVersion: networking.cfargotunnel.com/v1alpha2
 kind: ClusterTunnel
@@ -40,7 +55,14 @@ spec:
           containers:
             - name: cloudflared
               args:
-                {{- range $args }}
-                - {{ . | quote }}
-                {{- end }}
+                - "tunnel"
+                - "--protocol"
+                - {{ $protocol | quote }}
+                - "--edge-ip-version"
+                - {{ $edgeIpVersion | quote }}
+                - "--config"
+                - "/etc/cloudflared/config/config.yaml"
+                - "--metrics"
+                - "0.0.0.0:2000"
+                - "run"
 {{- end }}
