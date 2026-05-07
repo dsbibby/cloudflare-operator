@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "main"
+      - "feat/helm-charts"
   create:
     tags:
       - "v*"
@@ -13,6 +14,36 @@ on:
   workflow_dispatch:
 
 jobs:
+  publish-charts:
+    # Package and push Helm charts to ghcr.io as OCI artifacts.
+    # Runs on pushes to main and feat/helm-charts (for testing), and on version tags.
+    # Charts are published to oci://ghcr.io/<owner>/charts, so the registry path
+    # automatically resolves to the correct owner regardless of which fork runs it.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')
+    permissions:
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Package and push charts
+        run: |
+          REGISTRY="oci://ghcr.io/${{ github.repository_owner }}/charts"
+          for chart in charts/*/; do
+            helm package "$chart" --destination /tmp/helm-packages
+          done
+          for pkg in /tmp/helm-packages/*.tgz; do
+            helm push "$pkg" "$REGISTRY"
+          done
+
   release-charts:
     # Publish Helm charts to the gh-pages branch via chart-releaser on version tags.
     runs-on: ubuntu-latest
