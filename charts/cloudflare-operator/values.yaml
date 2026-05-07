@@ -1,0 +1,37 @@
+# Namespace where the operator will be installed.
+namespace: cloudflare-operator-system
+
+# Whether to create the namespace resource.
+# Set to false if the namespace already exists.
+createNamespace: true
+
+image:
+  repository: adyanth/cloudflare-operator
+  tag: "0.13.1"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 200Mi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+
+# Node selector applied to the controller Deployment.
+nodeSelector: {}
+
+# Tolerations applied to the controller Deployment.
+tolerations: []
+
+# Additional affinity rules. The chart already applies a nodeAffinity for
+# amd64/arm64 Linux nodes (mirroring the upstream kustomize manifest).
+affinity: {}
+
+# Annotations to add to the controller Pod.
+podAnnotations: {}
+
+# ServiceAccount name used by the controller.
+serviceAccountName: cloudflare-operator-controller-manager

@@ -1,0 +1,46 @@
+{{- range .Values.tunnels }}
+{{- $tunnel := . }}
+{{- $replicas := $tunnel.replicas | default $.Values.defaults.replicas }}
+{{- $protocol := $tunnel.protocol | default $.Values.defaults.protocol }}
+{{- $strategy := $tunnel.strategy | default $.Values.defaults.strategy }}
+{{- $args := $tunnel.args | default $.Values.defaults.args }}
+---
+apiVersion: networking.cfargotunnel.com/v1alpha2
+kind: ClusterTunnel
+metadata:
+  name: cloudflared-tunnel-{{ $tunnel.name }}
+spec:
+  newTunnel:
+    name: {{ $tunnel.name }}
+  cloudflare:
+    email: {{ $.Values.cloudflare.email }}
+    domain: {{ $tunnel.domain }}
+    secret: {{ $.Values.cloudflare.secret }}
+    accountId: {{ $.Values.cloudflare.accountId }}
+  protocol: {{ $protocol }}
+  deployPatch: |
+    spec:
+      replicas: {{ $replicas }}
+      strategy:
+        rollingUpdate:
+          maxSurge: {{ $strategy.maxSurge }}
+          maxUnavailable: {{ $strategy.maxUnavailable }}
+      template:
+        spec:
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: cfargotunnel.com/name
+                        operator: In
+                        values:
+                          - {{ $tunnel.name }}
+                  topologyKey: kubernetes.io/hostname
+          containers:
+            - name: cloudflared
+              args:
+                {{- range $args }}
+                - {{ . | quote }}
+                {{- end }}
+{{- end }}

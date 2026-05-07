@@ -1,0 +1,55 @@
+# Shared Cloudflare account credentials applied to every tunnel.
+# These must be set — there are no defaults.
+cloudflare:
+  # Cloudflare account email address.
+  email: ""
+  # Cloudflare account ID.
+  accountId: ""
+  # Name of the Kubernetes Secret that holds the Cloudflare API token.
+  # The Secret must exist in the same namespace as the operator.
+  secret: cloudflare-secrets
+
+# Defaults applied to every tunnel unless overridden per-tunnel.
+defaults:
+  # cloudflared tunnel protocol. http2 is recommended over auto for stability.
+  protocol: http2
+
+  # Number of cloudflared pod replicas per tunnel.
+  # When using hard pod anti-affinity this must not exceed the number of nodes.
+  replicas: 2
+
+  # Rolling update strategy.
+  # maxSurge must be 0 when replicas == node count and hard anti-affinity is
+  # in use; surge pods cannot be scheduled until an existing pod is evicted.
+  strategy:
+    maxSurge: 0
+    maxUnavailable: 1
+
+  # cloudflared args passed to every tunnel Deployment via deployPatch.
+  # --edge-ip-version auto allows IPv4+IPv6 edge connections, spreading load
+  # across more Cloudflare PoPs and reducing the reconnect window on edge
+  # maintenance events.
+  args:
+    - tunnel
+    - --protocol
+    - http2
+    - --edge-ip-version
+    - auto
+    - --config
+    - /etc/cloudflared/config/config.yaml
+    - --metrics
+    - 0.0.0.0:2000
+    - run
+
+# List of ClusterTunnels to create.
+# Each entry must supply: name, domain.
+# Optional per-tunnel overrides: replicas, protocol, strategy, args.
+#
+# Example:
+# tunnels:
+#   - name: my-tunnel
+#     domain: example.com
+#   - name: another-tunnel
+#     domain: other.example.com
+#     replicas: 3
+tunnels: []

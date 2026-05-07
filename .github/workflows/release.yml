@@ -13,6 +13,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  release-charts:
+    # Publish Helm charts to the gh-pages branch via chart-releaser on version tags.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'create' && github.event.ref_type == 'tag' && startsWith(github.event.ref, 'v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
   docker:
     runs-on: ubuntu-latest
     steps:
