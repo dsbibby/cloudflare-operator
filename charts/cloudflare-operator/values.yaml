@@ -35,3 +35,16 @@ podAnnotations: {}
 
 # ServiceAccount name used by the controller.
 serviceAccountName: cloudflare-operator-controller-manager
+
+# Webhook TLS configuration.
+# The operator always starts a conversion webhook server and requires TLS certs.
+webhook:
+  # Name of the Secret (in the operator namespace) containing tls.crt and tls.key.
+  # Created automatically when certManager.enabled is true.
+  secretName: webhook-server-cert
+
+  certManager:
+    # Set to true to create a self-signed cert-manager Issuer and Certificate.
+    # Requires cert-manager to be installed in the cluster.
+    # Set to false if you prefer to provision the Secret yourself.
+    enabled: true
