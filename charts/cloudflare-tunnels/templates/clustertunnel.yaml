@@ -6,8 +6,8 @@
 {{- $strategy      := $tunnel.strategy      | default $.Values.defaults.strategy }}
 
 {{/* Validate protocol */}}
-{{- if not (has $protocol (list "http2" "h2mux" "auto")) }}
-  {{- fail (printf "tunnel %q: invalid protocol %q — must be one of: http2, h2mux, auto" $tunnel.name $protocol) }}
+{{- if not (has $protocol (list "http2" "h2mux" "quic" "auto")) }}
+  {{- fail (printf "tunnel %q: invalid protocol %q — must be one of: http2, h2mux, quic, auto" $tunnel.name $protocol) }}
 {{- end }}
 
 {{/* Validate edgeIpVersion */}}

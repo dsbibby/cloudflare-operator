@@ -12,10 +12,11 @@ cloudflare:
 # Defaults applied to every tunnel unless overridden per-tunnel.
 defaults:
   # cloudflared tunnel protocol.
-  # Valid values: http2, h2mux, auto
-  # http2 is recommended: it uses a single multiplexed connection per edge,
-  # which reconnects faster than h2mux and is more predictable than auto.
-  protocol: http2
+  # Valid values: http2, h2mux, quic, auto
+  # quic is recommended: QUIC (UDP) has sub-second 0-RTT reconnects, whereas
+  # http2 (TCP) can take 10-20s to reconnect if the initial SYN is dropped
+  # during Cloudflare edge rotation.
+  protocol: quic
 
   # Cloudflare edge IP version preference for outbound connections.
   # Valid values: auto, 4, 6
@@ -46,6 +47,6 @@ defaults:
 #   - name: another-tunnel
 #     domain: other.example.com
 #     replicas: 3
-#     protocol: http2
+#     protocol: quic
 #     edgeIpVersion: auto
 tunnels: []
