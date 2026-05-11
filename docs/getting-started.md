@@ -92,7 +92,7 @@ Key values for the `cloudflare-tunnels` chart:
 | `cloudflare.email` | `""` | **Required.** Cloudflare account email |
 | `cloudflare.accountId` | `""` | **Required.** Cloudflare account ID |
 | `cloudflare.secret` | `cloudflare-secrets` | Name of the API token Secret |
-| `defaults.protocol` | `http2` | cloudflared protocol (`http2`, `h2mux`, `auto`) |
+| `defaults.protocol` | `quic` | cloudflared protocol (`http2`, `h2mux`, `quic`, `auto`) |
 | `defaults.edgeIpVersion` | `auto` | Edge IP version preference (`auto`, `4`, `6`) |
 | `defaults.replicas` | `2` | Replicas per tunnel Deployment |
 | `defaults.strategy.maxSurge` | `0` | Rolling update maxSurge |
