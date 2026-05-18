@@ -7,27 +7,83 @@ metadata:
   labels:
     {{- include "cloudflare-operator.labels" . | nindent 4 }}
 rules:
-- apiGroups: [""]
-  resources: [events]
-  verbs: [create, patch]
-- apiGroups: [apps]
-  resources: [deployments]
-  verbs: [create, delete, get, list, patch, update, watch]
-- apiGroups: [""]
-  resources: [configmaps, secrets]
-  verbs: [create, delete, get, list, patch, update, watch]
-- apiGroups: [""]
-  resources: [services]
-  verbs: [create, get, list, patch, update, watch]
-- apiGroups: [networking.cfargotunnel.com]
-  resources: [accesstunnels, clustertunnels, tunnelbindings, tunnels]
-  verbs: [create, delete, get, list, patch, update, watch]
-- apiGroups: [networking.cfargotunnel.com]
-  resources: [accesstunnels/status, clustertunnels/status, tunnelbindings/status, tunnels/status]
-  verbs: [get, patch, update]
-- apiGroups: [networking.cfargotunnel.com]
-  resources: [clustertunnels/finalizers, tunnelbindings/finalizers, tunnels/finalizers]
-  verbs: [update]
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - create
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - networking.cfargotunnel.com
+    resources:
+      - accesstunnels
+      - clustertunnels
+      - tunnelbindings
+      - tunnels
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - networking.cfargotunnel.com
+    resources:
+      - accesstunnels/status
+      - clustertunnels/status
+      - tunnelbindings/status
+      - tunnels/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - networking.cfargotunnel.com
+    resources:
+      - clustertunnels/finalizers
+      - tunnelbindings/finalizers
+      - tunnels/finalizers
+    verbs:
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

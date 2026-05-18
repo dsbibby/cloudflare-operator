@@ -48,3 +48,9 @@ webhook:
     # Requires cert-manager to be installed in the cluster.
     # Set to false if you prefer to provision the Secret yourself.
     enabled: true
+
+rbac:
+  # Install editor, viewer, and admin ClusterRoles for each CRD.
+  # These are not used by the operator itself but are useful helpers for
+  # granting end-users fine-grained access to cloudflare-operator resources.
+  installHelperRoles: true
