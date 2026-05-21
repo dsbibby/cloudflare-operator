@@ -1,9 +1,13 @@
 {{- define "cloudflare-operator.name" -}}
-{{- .Chart.Name }}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "cloudflare-operator.fullname" -}}
-{{- .Chart.Name }}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- end }}
 
 {{- define "cloudflare-operator.namespace" -}}

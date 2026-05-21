@@ -5,6 +5,11 @@ namespace: cloudflare-operator-system
 # Set to false if the namespace already exists.
 createNamespace: true
 
+# Override the chart name used in resource names and labels.
+nameOverride: ""
+# Override the full resource name prefix (defaults to chart name).
+fullnameOverride: ""
+
 image:
   repository: adyanth/cloudflare-operator
   tag: "0.13.1"
@@ -54,3 +59,12 @@ rbac:
   # These are not used by the operator itself but are useful helpers for
   # granting end-users fine-grained access to cloudflare-operator resources.
   installHelperRoles: true
+
+metrics:
+  serviceMonitor:
+    # Set to true to create a Prometheus ServiceMonitor for the metrics endpoint.
+    # Requires the Prometheus Operator (monitoring.coreos.com/v1 CRD) to be installed.
+    enabled: false
+    # Additional labels to add to the ServiceMonitor (e.g. to match your Prometheus
+    # instance's serviceMonitorSelector).
+    additionalLabels: {}
