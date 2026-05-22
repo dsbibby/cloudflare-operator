@@ -1,0 +1,48 @@
+apiVersion: v1
+entries:
+  cloudflare-operator:
+  - apiVersion: v2
+    appVersion: 0.13.1
+    created: "2026-05-22T19:51:03.230504308Z"
+    description: 'Helm chart for the Cloudflare Operator controller manager. Installs
+      the controller Deployment, CRDs, RBAC, and ServiceAccount required to manage
+      Cloudflare Tunnels via Kubernetes custom resources. '
+    digest: f9a2422cb1b30f85bcf9892d19fb9015adc0314d017115f4d52f4e29a4c727e8
+    home: https://github.com/adyanth/cloudflare-operator
+    keywords:
+    - cloudflare
+    - tunnel
+    - operator
+    maintainers:
+    - name: adyanth
+      url: https://github.com/adyanth
+    name: cloudflare-operator
+    sources:
+    - https://github.com/adyanth/cloudflare-operator
+    type: application
+    urls:
+    - https://github.com/dsbibby/cloudflare-operator/releases/download/cloudflare-operator-0.1.0/cloudflare-operator-0.1.0.tgz
+    version: 0.1.0
+  cloudflare-tunnels:
+  - apiVersion: v2
+    created: "2026-05-22T19:51:03.440673944Z"
+    description: 'Renders ClusterTunnel CRs for the cloudflare-operator. Centralises
+      shared deployment settings (protocol, rolling strategy, cloudflared args, anti-affinity)
+      so individual tunnel definitions only need to supply their unique fields (name,
+      domain). Requires the cloudflare-operator chart to be installed first. '
+    digest: aba8559f469a75665853fccbbb503ce983de3f3c9a2996d00566c983f4434174
+    home: https://github.com/adyanth/cloudflare-operator
+    keywords:
+    - cloudflare
+    - tunnel
+    maintainers:
+    - name: adyanth
+      url: https://github.com/adyanth
+    name: cloudflare-tunnels
+    sources:
+    - https://github.com/adyanth/cloudflare-operator
+    type: application
+    urls:
+    - https://github.com/dsbibby/cloudflare-operator/releases/download/cloudflare-tunnels-0.1.0/cloudflare-tunnels-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-05-22T19:51:03.440680897Z"
